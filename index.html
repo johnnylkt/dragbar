@@ -28,7 +28,7 @@
     overflow: visible;
   }
   .drag-bar {
-    width: 0%;
+    width: 85%;
     height: 100%;
     position: absolute;
     left: 0;
@@ -67,7 +67,7 @@
       <div class="drag-bar"></div>
       <div class="drag-handle"></div>
     </div>
-    <div class="percentage">0% Passing Score</div>
+    <div class="percentage">85% Passing Score</div>
   </div>
 
   <script>
@@ -129,7 +129,14 @@
       isDragging = false;
     });
 
-    // Initialize the bar
-    updatePosition(dragBarContainer.getBoundingClientRect().left);
+    // Initialize the bar at 85%
+    function initializeBar() {
+      const rect = dragBarContainer.getBoundingClientRect();
+      const initialPosition = rect.left + (rect.width * 0.85);
+      updatePosition(initialPosition);
+    }
+
+    // Call initializeBar when the page loads
+    window.addEventListener('load', initializeBar);
   </script>
 </body></html>
