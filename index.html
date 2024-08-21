@@ -1,0 +1,134 @@
+<html><head><base href="https://websim.creativeengine.example/widget/" />
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap');
+
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+  }
+  .widget {
+    width: 300px;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  .drag-bar-container {
+    width: 100%;
+    height: 20px;
+    background-color: #e0e0e0;
+    border-radius: 10px;
+    position: relative;
+    overflow: visible;
+  }
+  .drag-bar {
+    width: 0%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    border-radius: 10px;
+  }
+  .drag-handle {
+    width: 8px;
+    height: 28px;
+    background-color: #d0d0d0; /* Lighter grey color */
+    border-radius: 4px;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    cursor: grab;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    border: 1px solid #b0b0b0; /* Light shade outline */
+  }
+  .drag-handle:active {
+    cursor: grabbing;
+  }
+  .percentage {
+    text-align: center;
+    font-size: 16px;
+    margin-top: 20px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700;
+    color: #333;
+  }
+</style>
+</head>
+<body>
+  <div class="widget">
+    <div class="drag-bar-container">
+      <div class="drag-bar"></div>
+      <div class="drag-handle"></div>
+    </div>
+    <div class="percentage">0% Passing Score</div>
+  </div>
+
+  <script>
+    const dragBarContainer = document.querySelector('.drag-bar-container');
+    const dragBar = document.querySelector('.drag-bar');
+    const dragHandle = document.querySelector('.drag-handle');
+    const percentageDisplay = document.querySelector('.percentage');
+    let isDragging = false;
+
+    function updatePosition(clientX) {
+      const rect = dragBarContainer.getBoundingClientRect();
+      let position = (clientX - rect.left) / rect.width;
+      position = Math.max(0, Math.min(position, 1));
+      
+      const percentage = Math.round(position * 100);
+      dragHandle.style.left = `${percentage}%`;
+      dragBar.style.width = `${percentage}%`;
+      percentageDisplay.textContent = `${percentage}% Passing Score`;
+      
+      // Change color dynamically (red to green)
+      const hue = percentage * 1.2; // 0 to 120
+      const color = `hsl(${hue}, 100%, 45%)`;
+      dragBar.style.backgroundColor = color;
+    }
+
+    function handleMove(clientX) {
+      if (isDragging) {
+        requestAnimationFrame(() => updatePosition(clientX));
+      }
+    }
+
+    dragBarContainer.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      handleMove(e.clientX);
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      handleMove(e.clientX);
+    });
+
+    document.addEventListener('mouseup', () => {
+      isDragging = false;
+    });
+
+    // Touch events for mobile support
+    dragBarContainer.addEventListener('touchstart', (e) => {
+      isDragging = true;
+      handleMove(e.touches[0].clientX);
+    });
+
+    document.addEventListener('touchmove', (e) => {
+      if (isDragging) {
+        e.preventDefault(); // Prevent scrolling while dragging
+        handleMove(e.touches[0].clientX);
+      }
+    });
+
+    document.addEventListener('touchend', () => {
+      isDragging = false;
+    });
+
+    // Initialize the bar
+    updatePosition(dragBarContainer.getBoundingClientRect().left);
+  </script>
+</body></html>
